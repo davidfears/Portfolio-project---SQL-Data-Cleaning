@@ -3,16 +3,13 @@
 -- https://www.kaggle.com/datasets/swaptr/layoffs-2022
 
 
-
-
-
-
 SELECT * 
 FROM world_layoffs.layoffs;
 
 
 
--- first thing we want to do is create a staging table. This is the one we will work in and clean the data. We want a table with the raw data in case something happens
+-- the first thing we want to do is create a staging table. 
+-- This is the one we will work in and clean the data. We want a table with the raw data in case something happens
 CREATE TABLE world_layoffs.layoffs_staging 
 LIKE world_layoffs.layoffs;
 
@@ -20,7 +17,7 @@ INSERT layoffs_staging
 SELECT * FROM world_layoffs.layoffs;
 
 
--- now when we are data cleaning we usually follow a few steps
+-- Now when we are data cleaning we usually follow a few steps
 -- 1. check for duplicates and remove any
 -- 2. standardize data and fix errors
 -- 3. Look at null values and see what 
@@ -63,7 +60,8 @@ SELECT *
 FROM world_layoffs.layoffs_staging
 WHERE company = 'Oda'
 ;
--- it looks like these are all legitimate entries and shouldn't be deleted. We need to really look at every single row to be accurate
+-- it looks like these are all legitimate entries and shouldn't be deleted. 
+-- We need to really look at every single row to be accurate.
 
 -- these are our real duplicates 
 SELECT *
@@ -78,9 +76,9 @@ FROM (
 WHERE 
 	row_num > 1;
 
--- these are the ones we want to delete where the row number is > 1 or 2or greater essentially
+-- These are the ones we want to delete where the row number is > 1 or 2or greater essentially
 
--- now you may want to write it like this:
+-- Now you may want to write it like this:
 WITH DELETE_CTE AS 
 (
 SELECT *
@@ -111,7 +109,8 @@ WHERE (company, location, industry, total_laid_off, percentage_laid_off, `date`,
 	FROM DELETE_CTE
 ) AND row_num > 1;
 
--- one solution, which I think is a good one. Is to create a new column and add those row numbers in. Then delete where row numbers are over 2, then delete that column
+-- One solution, which I think is a good one. Is to create a new column and add those row numbers in. 
+-- Then delete where row numbers are over 2, then delete that column.
 -- so let's do it!!
 
 ALTER TABLE world_layoffs.layoffs_staging ADD row_num INT;
